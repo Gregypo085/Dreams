@@ -1,0 +1,298 @@
+/* Root Variables - Colors from album art */
+:root {
+    --bg-dark: #0f0a1a;
+    --bg-card: #1a1328;
+    --bg-hover: #251a36;
+    --accent: #ff2f88;
+    --accent-dim: #d91570;
+    --accent-cyan: #3dbbbb;
+    --accent-cyan-bright: #5cd5d5;
+    --text-primary: #ffeedd;
+    --text-secondary: #ffaa99;
+    --border: #2d2240;
+    --success: #3dbbbb;
+    --glow: rgba(255, 47, 136, 0.4);
+    --glow-cyan: rgba(61, 187, 187, 0.4);
+}
+
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Share Tech Mono', monospace;
+    background: url('Art/TV%20in%20Bed%203000x3000.png') center/cover no-repeat fixed;
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+/* Optional: Very light overlay for text readability */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 10, 26, 0.15);
+    z-index: -1;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    border-bottom: 2px solid var(--border);
+}
+
+h1 {
+    font-size: 3.5rem;
+    color: white;
+    margin-bottom: 10px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.4);
+}
+
+.subtitle {
+    color: white;
+    font-size: 1rem;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* Controls */
+.controls {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.main-button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 15px 50px;
+    font-size: 1.3rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 15px var(--glow);
+}
+
+.main-button:hover {
+    background: var(--accent-dim);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--glow);
+}
+
+.main-button.playing {
+    background: var(--success);
+    box-shadow: 0 4px 15px var(--glow-cyan);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Range Inputs */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 180px;
+    height: 6px;
+    background: var(--bg-dark);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--accent-cyan);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px var(--glow-cyan);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--accent-cyan-bright);
+    transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--accent-cyan);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px var(--glow-cyan);
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+    background: var(--accent-cyan-bright);
+    transform: scale(1.2);
+}
+
+/* Now Playing Section */
+.now-playing {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.current-song {
+    margin-bottom: 30px;
+}
+
+.label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+#currentSong {
+    font-size: 2.5rem;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow);
+    animation: fadeIn 1s ease-in;
+}
+
+.next-song {
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+#nextSong {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Info Section */
+.info {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.status {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+details {
+    color: var(--text-secondary);
+}
+
+summary {
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    user-select: none;
+    font-weight: bold;
+}
+
+summary:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+details p {
+    padding: 15px 20px;
+    line-height: 1.8;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+}
+
+footer a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--accent-dim);
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    #currentSong {
+        font-size: 1.8rem;
+    }
+
+    #nextSong {
+        font-size: 1.2rem;
+    }
+
+    .controls {
+        flex-direction: column;
+    }
+
+    input[type="range"] {
+        width: 100%;
+    }
+}
