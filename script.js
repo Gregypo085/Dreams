@@ -148,7 +148,7 @@ class DreamsEngine {
     }
 
     // Play a song on a specific source
-    playSong(songId, source) {
+    playSong(songId, source, updateUI = false) {
         const song = this.songs.find(s => s.id === songId);
         const buffer = this.buffers[songId];
 
@@ -159,7 +159,11 @@ class DreamsEngine {
 
         // Stop existing source if playing
         if (source.source) {
-            source.source.stop();
+            try {
+                source.source.stop();
+            } catch (e) {
+                // Source may have already stopped
+            }
         }
 
         // Create new source
@@ -173,29 +177,33 @@ class DreamsEngine {
         this.playCounts[songId]++;
         this.savePlayCounts();
 
-        // Update UI
-        updateNowPlaying(song.name);
+        // Update UI only if requested (for initial song)
+        if (updateUI) {
+            updateNowPlaying(song.name);
+        }
 
         // Schedule crossfade
         setTimeout(() => {
             if (this.isPlaying) {
-                this.startCrossfade(source);
+                this.startCrossfade(source, songId);
             }
         }, this.crossfadeStart * 1000);
     }
 
     // Start crossfade to next song
-    startCrossfade(currentSource) {
+    startCrossfade(currentSource, currentSongId) {
         // Determine which source to use for the next song
         const nextSource = currentSource === this.sourceA ? this.sourceB : this.sourceA;
 
         // Select and queue next song
-        this.nextSongId = this.selectNextSong(this.currentSongId).id;
-        const nextSong = this.songs.find(s => s.id === this.nextSongId);
+        const nextSongId = this.selectNextSong(currentSongId).id;
+        const nextSong = this.songs.find(s => s.id === nextSongId);
+
+        // Update "Coming Next" display
         updateNextSong(nextSong.name);
 
-        // Start playing next song (silent)
-        this.playSong(this.nextSongId, nextSource);
+        // Start playing next song (silent - starts at 0 gain)
+        this.playSong(nextSongId, nextSource, false);
 
         // Crossfade
         const now = this.audioContext.currentTime;
@@ -211,11 +219,18 @@ class DreamsEngine {
         nextSource.gain.gain.setValueAtTime(0.0, now);
         nextSource.gain.gain.linearRampToValueAtTime(1.0, now + fadeDuration);
 
-        // Update current source and song after crossfade
+        // Update current source, song, and UI after crossfade completes
         setTimeout(() => {
             currentSource.isPlaying = false;
             this.currentSource = nextSource;
-            this.currentSongId = this.nextSongId;
+            this.currentSongId = nextSongId;
+
+            // Update "Now Playing" after crossfade completes
+            updateNowPlaying(nextSong.name);
+
+            // Select and display what will come after this
+            const afterNext = this.selectNextSong(nextSongId);
+            updateNextSong(afterNext.name);
         }, fadeDuration * 1000);
     }
 
@@ -239,12 +254,11 @@ class DreamsEngine {
         this.currentSource = this.sourceA;
 
         // Select and display next song
-        this.nextSongId = this.selectNextSong(this.currentSongId).id;
-        const nextSong = this.songs.find(s => s.id === this.nextSongId);
+        const nextSong = this.selectNextSong(this.currentSongId);
         updateNextSong(nextSong.name);
 
         // Play first song with fade in
-        this.playSong(this.currentSongId, this.currentSource);
+        this.playSong(this.currentSongId, this.currentSource, true);
         const now = this.audioContext.currentTime;
         this.currentSource.gain.gain.setValueAtTime(0, now);
         this.currentSource.gain.gain.linearRampToValueAtTime(1.0, now + 2);
