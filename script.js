@@ -14,14 +14,14 @@ class DreamsEngine {
             { id: 1, name: "Am", file: "audio/ogg/1 Am.ogg" },
             { id: 2, name: "Cmaj6", file: "audio/ogg/2 Cmaj6.ogg" },
             { id: 3, name: "Dm7 add11", file: "audio/ogg/3 Dm7 add11.ogg" },
-            { id: 4, name: "A#maj7", file: "audio/ogg/4 A#maj7.ogg" },
+            { id: 4, name: "A#maj7", file: "audio/ogg/4 A%23maj7.ogg" },
             { id: 5, name: "Dm", file: "audio/ogg/5 Dm.ogg" },
-            { id: 6, name: "G#maj7", file: "audio/ogg/6 G#maj7.ogg" },
+            { id: 6, name: "G#maj7", file: "audio/ogg/6 G%23maj7.ogg" },
             { id: 7, name: "Em9", file: "audio/ogg/7 Em9.ogg" },
             { id: 8, name: "Cmaj9", file: "audio/ogg/8 Cmaj9.ogg" },
             { id: 9, name: "Dm7", file: "audio/ogg/9 Dm7.ogg" },
-            { id: 10, name: "G#m7", file: "audio/ogg/10 G#m7.ogg" },
-            { id: 11, name: "Em#5", file: "audio/ogg/11 Em#5.ogg" },
+            { id: 10, name: "G#m7", file: "audio/ogg/10 G%23m7.ogg" },
+            { id: 11, name: "Em#5", file: "audio/ogg/11 Em%235.ogg" },
             { id: 12, name: "Cmaj7", file: "audio/ogg/12 Cmaj7.ogg" },
             { id: 13, name: "Am9", file: "audio/ogg/13 Am9.ogg" },
             { id: 14, name: "Fadd9", file: "audio/ogg/14 Fadd9.ogg" },
@@ -31,7 +31,7 @@ class DreamsEngine {
             { id: 18, name: "Am7", file: "audio/ogg/18 Am7.ogg" },
             { id: 19, name: "Em", file: "audio/ogg/19 Em.ogg" },
             { id: 20, name: "Cmaj", file: "audio/ogg/20 Cmaj.ogg" },
-            { id: 21, name: "A#", file: "audio/ogg/21 A#.ogg" }
+            { id: 21, name: "A#", file: "audio/ogg/21 A%23.ogg" }
         ];
 
         this.buffers = {}; // Stores loaded audio buffers
