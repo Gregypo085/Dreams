@@ -216,20 +216,20 @@ class DreamsEngine {
         // Start playing next song (silent - starts at 0 gain)
         this.playSong(nextSongId, nextSource, false);
 
-        // Crossfade
+        // Crossfade with exponential curves for more musical transition
         const now = this.audioContext.currentTime;
         const fadeDuration = this.crossfadeDuration;
         console.log(`[startCrossfade] Starting ${fadeDuration}s crossfade at time ${now}`);
 
-        // Fade out current
+        // Fade out current (exponential for faster initial fade)
         currentSource.gain.gain.cancelScheduledValues(now);
         currentSource.gain.gain.setValueAtTime(1.0, now);
-        currentSource.gain.gain.linearRampToValueAtTime(0.0, now + fadeDuration);
+        currentSource.gain.gain.exponentialRampToValueAtTime(0.001, now + fadeDuration);
 
-        // Fade in next
+        // Fade in next (exponential for smoother entrance)
         nextSource.gain.gain.cancelScheduledValues(now);
-        nextSource.gain.gain.setValueAtTime(0.0, now);
-        nextSource.gain.gain.linearRampToValueAtTime(1.0, now + fadeDuration);
+        nextSource.gain.gain.setValueAtTime(0.001, now);
+        nextSource.gain.gain.exponentialRampToValueAtTime(1.0, now + fadeDuration);
 
         // Update current source, song, and UI after crossfade completes
         setTimeout(() => {
