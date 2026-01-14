@@ -1,15 +1,18 @@
-/* Root Variables */
+/* Root Variables - Colors from album art */
 :root {
     --bg-dark: #0f0a1a;
     --bg-card: #1a1328;
     --bg-hover: #251a36;
-    --accent: #9b7fd5;
-    --accent-dim: #7a5fb0;
-    --text-primary: #e6e1f0;
-    --text-secondary: #9a8db5;
+    --accent: #ff2f88;
+    --accent-dim: #d91570;
+    --accent-cyan: #3dbbbb;
+    --accent-cyan-bright: #5cd5d5;
+    --text-primary: #ffeedd;
+    --text-secondary: #ffaa99;
     --border: #2d2240;
-    --success: #7cb342;
-    --glow: rgba(155, 127, 213, 0.3);
+    --success: #3dbbbb;
+    --glow: rgba(255, 47, 136, 0.4);
+    --glow-cyan: rgba(61, 187, 187, 0.4);
 }
 
 /* Reset & Base */
@@ -61,7 +64,7 @@ h1 {
     color: var(--accent);
     margin-bottom: 10px;
     letter-spacing: 3px;
-    text-shadow: 0 0 20px var(--glow);
+    text-shadow: 0 0 30px var(--glow), 0 0 60px var(--glow);
 }
 
 .subtitle {
@@ -87,7 +90,7 @@ h1 {
 
 .main-button {
     background: var(--accent);
-    color: var(--bg-dark);
+    color: white;
     border: none;
     padding: 15px 50px;
     font-size: 1.3rem;
@@ -109,7 +112,7 @@ h1 {
 
 .main-button.playing {
     background: var(--success);
-    box-shadow: 0 4px 15px rgba(124, 179, 66, 0.4);
+    box-shadow: 0 4px 15px var(--glow-cyan);
 }
 
 .control-group {
@@ -138,31 +141,31 @@ input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
-    background: var(--accent);
+    background: var(--accent-cyan);
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px var(--glow);
+    box-shadow: 0 0 10px var(--glow-cyan);
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-    background: var(--accent-dim);
+    background: var(--accent-cyan-bright);
     transform: scale(1.2);
 }
 
 input[type="range"]::-moz-range-thumb {
     width: 20px;
     height: 20px;
-    background: var(--accent);
+    background: var(--accent-cyan);
     border-radius: 50%;
     cursor: pointer;
     border: none;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px var(--glow);
+    box-shadow: 0 0 10px var(--glow-cyan);
 }
 
 input[type="range"]::-moz-range-thumb:hover {
-    background: var(--accent-dim);
+    background: var(--accent-cyan-bright);
     transform: scale(1.2);
 }
 
@@ -192,7 +195,7 @@ input[type="range"]::-moz-range-thumb:hover {
 #currentSong {
     font-size: 2.5rem;
     color: var(--accent);
-    text-shadow: 0 0 15px var(--glow);
+    text-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow);
     animation: fadeIn 1s ease-in;
 }
 
