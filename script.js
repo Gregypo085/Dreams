@@ -41,6 +41,9 @@ class DreamsEngine {
         this.currentSongId = null;
         this.nextSongId = null;
 
+        // Queue management
+        this.queue = [];
+
         // Timing constants (in seconds)
         this.songDuration = 37;
         this.crossfadeDuration = 8;
@@ -119,8 +122,16 @@ class DreamsEngine {
         }
     }
 
-    // Weighted random selection
+    // Select next song: check queue first, then weighted random
     selectNextSong(excludeId) {
+        // If queue has songs, use queue (FIFO)
+        if (this.queue.length > 0) {
+            const nextId = this.queue.shift(); // Remove and return first item
+            this.updateQueueDisplay();
+            return this.songs.find(s => s.id === nextId);
+        }
+
+        // Otherwise, use weighted random selection
         // Calculate weights for all songs (except excluded)
         const candidates = this.songs.filter(song => song.id !== excludeId);
 
@@ -145,6 +156,87 @@ class DreamsEngine {
 
         // Fallback (should never reach here)
         return candidates[0];
+    }
+
+    // Queue Management
+    addToQueue(songId) {
+        this.queue.push(songId);
+        this.updateQueueDisplay();
+        console.log(`[Queue] Added song ${songId}. Queue length: ${this.queue.length}`);
+    }
+
+    removeFromQueue(index) {
+        this.queue.splice(index, 1);
+        this.updateQueueDisplay();
+        console.log(`[Queue] Removed song at index ${index}. Queue length: ${this.queue.length}`);
+    }
+
+    clearQueue() {
+        this.queue = [];
+        this.updateQueueDisplay();
+        console.log('[Queue] Cleared all songs');
+    }
+
+    updateQueueDisplay() {
+        const queueList = document.getElementById('queueList');
+
+        if (this.queue.length === 0) {
+            queueList.innerHTML = '<p class="queue-empty">Queue is empty. Click chords to add them.</p>';
+            return;
+        }
+
+        queueList.innerHTML = '';
+        this.queue.forEach((songId, index) => {
+            const song = this.songs.find(s => s.id === songId);
+            const queueItem = document.createElement('div');
+            queueItem.className = 'queue-item';
+            queueItem.innerHTML = `
+                <span class="queue-item-name">${song.name}</span>
+                <button class="queue-item-remove" data-index="${index}">×</button>
+            `;
+            queueList.appendChild(queueItem);
+        });
+
+        // Add remove button listeners
+        document.querySelectorAll('.queue-item-remove').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.removeFromQueue(index);
+            });
+        });
+    }
+
+    // Generate song grid
+    generateSongGrid() {
+        const songGrid = document.getElementById('songGrid');
+        songGrid.innerHTML = '';
+
+        this.songs.forEach(song => {
+            const card = document.createElement('div');
+            card.className = 'song-card';
+            card.dataset.songId = song.id;
+            card.textContent = song.name;
+
+            card.addEventListener('click', () => {
+                this.addToQueue(song.id);
+            });
+
+            songGrid.appendChild(card);
+        });
+    }
+
+    // Update currently playing indicator in grid
+    updatePlayingIndicator(songId) {
+        document.querySelectorAll('.song-card').forEach(card => {
+            card.classList.remove('playing');
+        });
+
+        if (songId) {
+            const currentCard = document.querySelector(`.song-card[data-song-id="${songId}"]`);
+            if (currentCard) {
+                currentCard.classList.add('playing');
+            }
+        }
     }
 
     // Play a song on a specific source
@@ -182,6 +274,7 @@ class DreamsEngine {
         // Update UI only if requested (for initial song)
         if (updateUI) {
             updateNowPlaying(song.name);
+            this.updatePlayingIndicator(songId);
         }
 
         // Schedule crossfade
@@ -240,6 +333,7 @@ class DreamsEngine {
 
             // Update "Now Playing" after crossfade completes
             updateNowPlaying(nextSong.name);
+            this.updatePlayingIndicator(nextSongId);
 
             // Select and display what will come after this
             const afterNext = this.selectNextSong(nextSongId);
@@ -331,6 +425,9 @@ function updateNextSong(songName) {
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
+    // Generate song grid
+    engine.generateSongGrid();
+
     // Play/Pause Button
     const playPauseBtn = document.getElementById('playPause');
     playPauseBtn.addEventListener('click', async () => {
@@ -359,6 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
             engine.setMasterVolume(value);
         }
         masterVolumeValue.textContent = `${Math.round(value * 100)}%`;
+    });
+
+    // Clear Queue Button
+    const clearQueueBtn = document.getElementById('clearQueue');
+    clearQueueBtn.addEventListener('click', () => {
+        engine.clearQueue();
     });
 
     updateStatus('Click Play to begin your journey');

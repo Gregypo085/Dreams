@@ -274,7 +274,189 @@ footer a:hover {
     text-decoration: underline;
 }
 
+/* Main Layout - Two Column */
+.main-layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 30px;
+    align-items: start;
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.right-panel {
+    position: sticky;
+    top: 20px;
+}
+
+/* Song Grid Section */
+.song-grid-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.section-title {
+    color: var(--accent-cyan);
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.song-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+}
+
+.song-card {
+    background: var(--bg-dark);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.song-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--glow);
+}
+
+.song-card.playing {
+    border-color: var(--success);
+    background: var(--bg-hover);
+    box-shadow: 0 0 20px var(--glow-cyan);
+}
+
+.song-card.playing::before {
+    content: '♪ ';
+    color: var(--success);
+}
+
+/* Queue Section */
+.queue-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    min-height: 400px;
+    max-height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+}
+
+.queue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border);
+}
+
+.queue-header h3 {
+    color: var(--accent-cyan);
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.clear-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.queue-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.queue-empty {
+    color: var(--text-secondary);
+    text-align: center;
+    font-style: italic;
+    padding: 40px 20px;
+}
+
+.queue-item {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.queue-item:hover {
+    border-color: var(--accent-cyan);
+}
+
+.queue-item-name {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.queue-item-remove {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 5px;
+    transition: color 0.3s ease;
+}
+
+.queue-item-remove:hover {
+    color: var(--accent);
+}
+
 /* Responsive */
+@media (max-width: 1200px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .right-panel {
+        position: static;
+    }
+
+    .queue-section {
+        max-height: 500px;
+    }
+}
+
 @media (max-width: 768px) {
     h1 {
         font-size: 2.5rem;
@@ -294,5 +476,15 @@ footer a:hover {
 
     input[type="range"] {
         width: 100%;
+    }
+
+    .song-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    .song-card {
+        padding: 12px 8px;
+        font-size: 0.85rem;
     }
 }
