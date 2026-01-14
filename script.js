@@ -43,8 +43,8 @@ class DreamsEngine {
 
         // Timing constants (in seconds)
         this.songDuration = 37;
-        this.crossfadeDuration = 7;
-        this.crossfadeStart = this.songDuration - this.crossfadeDuration; // 30 seconds
+        this.crossfadeDuration = 8;
+        this.crossfadeStart = this.songDuration - this.crossfadeDuration; // 29 seconds
     }
 
     // Initialize Web Audio Context
