@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreams - Generative Chord Progressions</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dreams</h1>
+            <p class="subtitle">Infinite generative chord progressions</p>
+        </header>
+
+        <main>
+            <!-- Playback Controls -->
+            <section class="controls">
+                <button id="playPause" class="main-button">Play</button>
+
+                <div class="control-group">
+                    <label for="masterVolume">Volume</label>
+                    <input type="range" id="masterVolume" min="0" max="1" step="0.01" value="0.7">
+                    <span id="masterVolumeValue">70%</span>
+                </div>
+            </section>
+
+            <!-- Now Playing Display -->
+            <section class="now-playing">
+                <div class="current-song">
+                    <p class="label">Now Playing</p>
+                    <h2 id="currentSong">—</h2>
+                </div>
+
+                <div class="next-song">
+                    <p class="label">Coming Next</p>
+                    <h3 id="nextSong">—</h3>
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="info">
+                <p class="status" id="status">Click Play to begin your journey</p>
+                <details>
+                    <summary>How it works</summary>
+                    <p>Dreams creates infinite generative chord progressions by seamlessly crossfading between 21 different chord textures. Each song is 37 seconds long with 12-second crossfades creating smooth, meditative transitions.</p>
+                    <p>The algorithm intelligently selects the next chord based on weighted randomness - songs you've heard recently are less likely to repeat, but never impossible.</p>
+                </details>
+            </section>
+        </main>
+
+        <footer>
+            <p>A <a href="https://gostnode.com" target="_blank">GostNode</a> project</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
