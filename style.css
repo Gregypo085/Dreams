@@ -55,32 +55,34 @@ body::after {
     width: 200%;
     height: 200%;
     background:
-        radial-gradient(circle at 20% 50%, rgba(61, 187, 187, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(255, 47, 136, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(92, 213, 213, 0.12) 0%, transparent 50%);
-    animation: ripple 15s ease-in-out infinite;
-    z-index: -1;
+        radial-gradient(circle at 30% 40%, rgba(61, 187, 187, 0.25) 0%, transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(255, 47, 136, 0.2) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(92, 213, 213, 0.25) 0%, transparent 35%);
+    animation: ripple 12s ease-in-out infinite;
+    z-index: 0;
     pointer-events: none;
 }
 
 @keyframes ripple {
     0%, 100% {
         transform: translate(0, 0) scale(1);
-        opacity: 0.6;
     }
-    33% {
-        transform: translate(3%, -4%) scale(1.05);
-        opacity: 0.8;
+    25% {
+        transform: translate(5%, -3%) scale(1.08);
     }
-    66% {
-        transform: translate(-4%, 3%) scale(0.98);
-        opacity: 0.5;
+    50% {
+        transform: translate(-3%, 5%) scale(0.95);
+    }
+    75% {
+        transform: translate(-5%, -4%) scale(1.05);
     }
 }
 
 .container {
     max-width: 800px;
     width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 /* Header */
