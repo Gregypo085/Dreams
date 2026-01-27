@@ -2,9 +2,10 @@ services:
   - type: web
     name: dreams-streaming-server
     env: node
-    rootDir: server
-    buildCommand: npm install
-    startCommand: node server.js
+    region: oregon
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && node server.js
     envVars:
       - key: NODE_ENV
         value: production
