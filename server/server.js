@@ -103,7 +103,8 @@ app.get('/stream', (req, res) => {
         console.log(`🎶 Playing: ${currentSong.name} → ${nextSong.name}`);
 
         // Create ffmpeg command for crossfading two songs
-        // Song duration: 37s, Crossfade: 8s, Start crossfade at: 29s
+        // Song duration: 37s, Crossfade: 12s, Start crossfade at: 25s
+        // This matches the Dreams website behavior
         const command = ffmpeg()
             .input(currentPath)
             .input(nextPath)
@@ -112,8 +113,8 @@ app.get('/stream', (req, res) => {
                 '[0:a]atrim=0:37,asetpts=PTS-STARTPTS[a0]',
                 // Trim second song to full length (37s)
                 '[1:a]atrim=0:37,asetpts=PTS-STARTPTS[a1]',
-                // Crossfade: start at 29s, duration 8s
-                '[a0][a1]acrossfade=d=8:c1=tri:c2=tri:o=1[out]'
+                // Crossfade: start at 25s, duration 12s (matches website)
+                '[a0][a1]acrossfade=d=12:c1=tri:c2=tri:o=1[out]'
             ])
             .outputOptions([
                 '-map [out]',
