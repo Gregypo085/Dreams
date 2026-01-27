@@ -93,61 +93,67 @@ app.get('/stream', (req, res) => {
         isClientConnected = false;
     });
 
-    // Function to stream a single chord with crossfade to next
-    function streamChord(currentSong, nextSong) {
-        if (!isClientConnected) return;
+    // Build infinite concatenated input list for FFmpeg
+    // This creates a continuous stream with proper crossfading
+    let currentSong = selectNextSong();
+    const playlist = [];
 
-        const currentPath = path.join(AUDIO_DIR, currentSong.file);
-        const nextPath = path.join(AUDIO_DIR, nextSong.file);
-
-        console.log(`🎶 Playing: ${currentSong.name} → ${nextSong.name}`);
-
-        // Create ffmpeg command for crossfading two songs
-        // Song duration: 37s, Crossfade: 12s, Start crossfade at: 25s
-        // This matches the Dreams website behavior
-        const command = ffmpeg()
-            .input(currentPath)
-            .input(nextPath)
-            .complexFilter([
-                // Trim first song to full length (37s)
-                '[0:a]atrim=0:37,asetpts=PTS-STARTPTS[a0]',
-                // Trim second song to full length (37s)
-                '[1:a]atrim=0:37,asetpts=PTS-STARTPTS[a1]',
-                // Crossfade: start at 25s, duration 12s (matches website)
-                '[a0][a1]acrossfade=d=12:c1=tri:c2=tri:o=1[out]'
-            ])
-            .outputOptions([
-                '-map [out]',
-                '-c:a libopus',
-                '-b:a 128k',
-                '-vbr on',
-                '-f opus'
-            ])
-            .on('start', (cmd) => {
-                console.log('FFmpeg command:', cmd);
-            })
-            .on('error', (err) => {
-                if (isClientConnected) {
-                    console.error('FFmpeg error:', err.message);
-                }
-            })
-            .on('end', () => {
-                if (isClientConnected) {
-                    console.log('✓ Chunk completed, selecting next...');
-                    // Select next chord and continue streaming
-                    const followingSong = selectNextSong();
-                    streamChord(nextSong, followingSong);
-                }
-            });
-
-        // Pipe output to response
-        command.pipe(res, { end: false });
+    // Generate playlist of songs (we'll keep adding to this)
+    for (let i = 0; i < 100; i++) {  // Start with 100 songs (~60 minutes)
+        playlist.push(currentSong);
+        currentSong = selectNextSong();
     }
 
-    // Start the infinite stream
-    const firstSong = selectNextSong();
-    const secondSong = selectNextSong();
-    streamChord(firstSong, secondSong);
+    console.log(`🎶 Starting stream with ${playlist.length} songs queued`);
+    console.log(`   First songs: ${playlist.slice(0, 3).map(s => s.name).join(' → ')}`);
+
+    // Create FFmpeg process with concat and crossfade
+    // We'll use a filter_complex to crossfade all songs together
+    const command = ffmpeg();
+
+    // Add all inputs
+    playlist.forEach(song => {
+        command.input(path.join(AUDIO_DIR, song.file));
+    });
+
+    // Build filter complex for sequential crossfading
+    // Each song is 37s, crossfade is 12s starting at 25s
+    const filters = [];
+    let currentLabel = '[0:a]';
+
+    for (let i = 0; i < playlist.length - 1; i++) {
+        const nextInput = `[${i + 1}:a]`;
+        const outputLabel = i === playlist.length - 2 ? '[out]' : `[a${i}]`;
+
+        // Crossfade current with next
+        // Duration: 12s, offset: 25s (starts crossfade at 25s mark)
+        filters.push(`${currentLabel}${nextInput}acrossfade=d=12:o=1${outputLabel}`);
+        currentLabel = outputLabel;
+    }
+
+    command
+        .complexFilter(filters)
+        .outputOptions([
+            '-map [out]',
+            '-c:a libopus',
+            '-b:a 128k',
+            '-vbr on',
+            '-f opus'
+        ])
+        .on('start', (cmd) => {
+            console.log('FFmpeg started');
+        })
+        .on('error', (err) => {
+            if (isClientConnected) {
+                console.error('FFmpeg error:', err.message);
+            }
+        })
+        .on('end', () => {
+            console.log('Stream ended');
+        });
+
+    // Pipe output to response
+    command.pipe(res, { end: false });
 });
 
 // Root endpoint - info page
