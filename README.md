@@ -27,10 +27,17 @@ Dreams creates an endless, evolving soundscape by seamlessly blending 21 unique 
 
 ## Tech Stack
 
+### Client (Web App)
 - Pure vanilla JavaScript
 - Web Audio API for dual-source crossfading
 - localStorage for play count persistence
-- No backend required - fully client-side
+- Fully client-side, hosted on GitHub Pages
+
+### Server (Streaming API)
+- Node.js + Express
+- FFmpeg for audio processing and crossfading
+- HTTP streaming endpoint for Discord bot integration
+- See `/server` directory for details
 
 ## Chord List
 
@@ -64,6 +71,28 @@ python3 -m http.server 8000
 ```
 
 Then open http://localhost:8000
+
+## Streaming Server
+
+The `/server` directory contains a Node.js streaming server that provides an HTTP audio stream for integrations (e.g., Discord bots).
+
+**Features:**
+- Infinite audio stream using FFmpeg
+- Same weighted random selection as client
+- 8-second crossfades between chords
+- Opus format, 128kbps
+
+**Deploy to Railway:**
+See `/server/DEPLOY.md` for deployment instructions.
+
+**Local development:**
+```bash
+cd server
+npm install
+npm start
+```
+
+Stream available at: `http://localhost:3000/stream`
 
 ## Roadmap
 
