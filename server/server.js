@@ -93,43 +93,67 @@ app.get('/stream', (req, res) => {
         isClientConnected = false;
     });
 
-    // Build infinite concatenated input list for FFmpeg
-    // This creates a continuous stream with proper crossfading
-    let currentSong = selectNextSong();
+    // Generate playlist of songs
+    // Dreams concept: Each song flows perfectly into any other with crossfading
     const playlist = [];
-
-    // Generate playlist of songs (we'll keep adding to this)
-    for (let i = 0; i < 100; i++) {  // Start with 100 songs (~60 minutes)
-        playlist.push(currentSong);
-        currentSong = selectNextSong();
+    for (let i = 0; i < 100; i++) {  // 100 songs (~60 minutes of music)
+        playlist.push(selectNextSong());
     }
 
     console.log(`🎶 Starting stream with ${playlist.length} songs queued`);
     console.log(`   First songs: ${playlist.slice(0, 3).map(s => s.name).join(' → ')}`);
 
-    // Create FFmpeg process with concat and crossfade
-    // We'll use a filter_complex to crossfade all songs together
+    // Create FFmpeg process
     const command = ffmpeg();
 
-    // Add all inputs
+    // Add all audio inputs
     playlist.forEach(song => {
         command.input(path.join(AUDIO_DIR, song.file));
     });
 
-    // Build filter complex for sequential crossfading
-    // Each song is 37s, crossfade is 12s starting at 25s
+    // Build filter complex for proper crossfading
+    // Dreams timing: 37s songs, 8s crossfade starting at 29s
+    //
+    // How it works (mimics website's dual-source approach):
+    // - Song 0: plays from 0-37s, fades out last 8s (29-37s)
+    // - Song 1: delayed by 29s, plays from 29-66s, fades in first 8s (29-37s), fades out last 8s (58-66s)
+    // - Song 2: delayed by 58s, plays from 58-95s, fades in first 8s (58-66s), fades out last 8s (87-95s)
+    // - etc...
+    //
+    // Each song overlaps with the next by 8 seconds, creating seamless transitions
+
     const filters = [];
-    let currentLabel = '[0:a]';
 
-    for (let i = 0; i < playlist.length - 1; i++) {
-        const nextInput = `[${i + 1}:a]`;
-        const outputLabel = i === playlist.length - 2 ? '[out]' : `[a${i}]`;
+    // Process each song: add fade in (except first), fade out, and delay
+    for (let i = 0; i < playlist.length; i++) {
+        const input = `[${i}:a]`;
+        const delay = i * 29; // Each song starts 29s after previous (37s - 8s overlap)
 
-        // Crossfade current with next
-        // Duration: 12s, offset: 25s (starts crossfade at 25s mark)
-        filters.push(`${currentLabel}${nextInput}acrossfade=d=12:o=1${outputLabel}`);
-        currentLabel = outputLabel;
+        // Build filter chain for this song
+        let filterChain = input;
+
+        // Add fade in for all songs except the first (8 seconds)
+        if (i > 0) {
+            filterChain += `afade=t=in:st=0:d=8,`;
+        }
+
+        // Add fade out for all songs (8 seconds at end, starting at 29s)
+        filterChain += `afade=t=out:st=29:d=8`;
+
+        // Add delay to offset this song in the timeline
+        if (delay > 0) {
+            filterChain += `,adelay=${delay * 1000}|${delay * 1000}`;
+        }
+
+        // Label this processed audio stream
+        filterChain += `[a${i}]`;
+
+        filters.push(filterChain);
     }
+
+    // Mix all processed streams together
+    const mixInputs = playlist.map((_, i) => `[a${i}]`).join('');
+    filters.push(`${mixInputs}amix=inputs=${playlist.length}:duration=longest:normalize=0[out]`);
 
     command
         .complexFilter(filters)
@@ -141,7 +165,7 @@ app.get('/stream', (req, res) => {
             '-f opus'
         ])
         .on('start', (cmd) => {
-            console.log('FFmpeg started');
+            console.log('🎵 FFmpeg started with proper crossfading (8s at 29s)');
         })
         .on('error', (err) => {
             if (isClientConnected) {

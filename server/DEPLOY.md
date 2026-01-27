@@ -30,14 +30,19 @@ Railway should auto-detect Node.js, but if not:
 3. Railway will provide a URL like: `https://dreams-server-production.up.railway.app`
 
 ### 6. Verify Deployment
-Visit your Railway URL - you should see the Dreams Streaming Server info page.
+Visit your deployment URL - you should see the Dreams Streaming Server info page.
 
 Test the stream:
 ```bash
-curl -I https://your-railway-url.up.railway.app/stream
+curl -I https://your-deployment-url/stream
 ```
 
 Should return `HTTP/2 200` with `content-type: audio/opus`
+
+Test audio playback (saves 10 seconds to file):
+```bash
+curl https://your-deployment-url/stream --output test.opus --max-time 10
+```
 
 ### 7. Update Discord Bot
 Edit `/Users/greg/code/DiscordBot/.env`:

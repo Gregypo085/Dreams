@@ -6,9 +6,10 @@ Server-side audio streaming endpoint for the Dreams Discord bot.
 
 This server:
 1. Implements Dreams' weighted random selection algorithm
-2. Crossfades 21 chord samples using ffmpeg
-3. Streams infinite audio via HTTP (Opus format)
-4. Discord bot consumes this stream and plays it in voice channels
+2. Crossfades 21 chord samples using ffmpeg (8-second crossfades starting at 29s)
+3. Mimics the website's dual-source overlapping playback approach
+4. Streams infinite audio via HTTP (Opus format, 128kbps)
+5. Discord bot consumes this stream and plays it in voice channels
 
 ## Requirements
 
@@ -62,8 +63,11 @@ Infinite audio stream of Dreams chord progressions.
 
 - **Format:** Opus
 - **Bitrate:** 128kbps
-- **Crossfade:** 8 seconds (starting at 29s of each 37s chord)
+- **Song Duration:** 37 seconds per chord
+- **Crossfade:** 8 seconds (starting at 29s into each chord)
+- **Overlap:** Songs overlap by 8 seconds, creating seamless transitions
 - **Selection:** Weighted random (matches client algorithm)
+- **Flow:** Each chord transitions perfectly into any other chord
 
 Example:
 ```bash
@@ -117,11 +121,20 @@ pm2 startup
 
 ### Crossfading Algorithm
 
+Dreams was designed with crossfading as a core concept - each chord was composed with identical fade characteristics.
+
+**Timing:**
 - **Song duration:** 37 seconds
 - **Crossfade duration:** 8 seconds
-- **Crossfade start:** 29 seconds
-- **Crossfade curve:** Triangular (tri)
-- **Output after crossfade:** 29 + 8 = 37 seconds per chunk
+- **Crossfade start:** 29 seconds into each song
+- **Overlap period:** 29-37 seconds (songs play simultaneously)
+
+**Implementation:**
+- Uses `afade` filters for volume automation (in/out)
+- Uses `adelay` to offset each song by 29 seconds
+- Uses `amix` to mix overlapping audio streams
+- Mimics the website's dual-source approach: songs fully overlap during crossfade
+- Result: Seamless transitions with no audio discontinuities
 
 ### Weighted Random Selection
 
